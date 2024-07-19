@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+ENV/
+data/raw/
+data/processed/
+data/results/
+data/simulations/
+config.json
+.vscode/
