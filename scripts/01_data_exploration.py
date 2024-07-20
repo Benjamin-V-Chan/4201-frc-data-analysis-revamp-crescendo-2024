@@ -10,10 +10,11 @@ match_data_path = '../data/raw/port-hueneme-raw-scouter-data.csv'
 super_data_path = '../data/raw/port-hueneme-raw-super-data.csv'
 output_data_path = '../data/processed/merged_data.csv'
 output_plots_path = '../data/results/plots'
-output_stats_path = '../data/results/statistics.txt'
+output_stats_path = '../data/results/statistics/01_data_exploration_statistics.txt'
 
 os.makedirs(os.path.dirname(output_data_path), exist_ok=True)
 os.makedirs(output_plots_path, exist_ok=True)
+os.makedirs(os.path.dirname(output_stats_path), exist_ok=True)
 
 match_df = pd.read_csv(match_data_path)
 super_df = pd.read_csv(super_data_path)
@@ -26,54 +27,46 @@ match_df['robotPosition'] = match_df['robotPosition'].astype(str)
 super_df['robotPosition'] = super_df['robotPosition'].astype(str)
 
 merged_df = pd.merge(match_df, super_df, on=['matchNumber', 'robotTeam', 'robotPosition'])
-
-# Calculate number of deleted non-matching entries in the merged data
 deleted_data_count = len(match_df) + len(super_df) - 2 * len(merged_df)
-
 merged_df.to_csv(output_data_path, index=False)
 
-# Save statistics to statistics.txt
+# Statistics
 with open(output_stats_path, 'w') as f:
     f.write(f"Match Data Shape: {match_df.shape}\n")
     f.write(f"Super Data Shape: {super_df.shape}\n")
     f.write(f"Merged Data Shape: {merged_df.shape}\n")
     f.write(f"Number of rows deleted due to non-matching entries: {deleted_data_count}\n\n")
-
     f.write("Match Data Info:\n")
     match_df.info(buf=f)
     f.write("\n\nSuper Data Info:\n")
     super_df.info(buf=f)
     f.write("\n\nMerged Data Info:\n")
     merged_df.info(buf=f)
-
     f.write("\n\nMatch Data Statistics:\n")
     f.write(match_df.describe().to_string())
     f.write("\n\nSuper Data Statistics:\n")
     f.write(super_df.describe().to_string())
     f.write("\n\nMerged Data Statistics:\n")
     f.write(merged_df.describe().to_string())
-
     f.write("\n\nFirst few rows of match data:\n")
     f.write(match_df.head().to_string())
     f.write("\n\nFirst few rows of super data:\n")
     f.write(super_df.head().to_string())
     f.write("\n\nFirst few rows of merged data:\n")
     f.write(merged_df.head().to_string())
-
     missing_values = merged_df.isnull().sum()
     f.write("\n\nMissing Values:\n")
     f.write(missing_values.to_string())
 
 merged_df.fillna(0, inplace=True)
 
+# Plot histograms for key features
 key_features = merged_df.columns.difference(['matchNumber', 'robotTeam', 'robotPosition'])
-
 num_plots = len(key_features)
 num_cols = 5
 num_rows = math.ceil(num_plots / num_cols)
 plots_per_figure = 20
 
-# Plot key features histograms
 for start in range(0, num_plots, plots_per_figure):
     end = min(start + plots_per_figure, num_plots)
     features = key_features[start:end]
@@ -91,7 +84,7 @@ for start in range(0, num_plots, plots_per_figure):
     plt.savefig(os.path.join(output_plots_path, f'feature_distributions_{start // plots_per_figure + 1}.png'))
     plt.close()
 
-# Correlation matrix
+# Correlation analysis
 numeric_columns = merged_df.select_dtypes(include=['float64', 'int64']).columns
 plt.figure(figsize=(20, 16))
 correlation_matrix = merged_df[numeric_columns].corr()
@@ -121,3 +114,6 @@ plt.ylabel('Values')
 plt.tight_layout()
 plt.savefig(os.path.join(output_plots_path, 'tele_distances_boxplots.png'))
 plt.close()
+
+print("Data exploration complete. Merged data saved to:", output_data_path)
+print("Statistics saved to:", output_stats_path)
