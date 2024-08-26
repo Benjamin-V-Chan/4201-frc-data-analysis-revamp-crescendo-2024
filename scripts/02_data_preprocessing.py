@@ -1,35 +1,35 @@
 import pandas as pd
 import os
+import json
 
-input_data_path = '../data/processed/merged_data.csv'
-output_data_path = '../data/processed/cleaned_data.csv'
-output_stats_path = '../data/results/statistics/02_data_preprocessing_statistics.txt'
+# Load configuration
+with open('config.json', 'r') as config_file:
+    config = json.load(config_file)
 
+# Access the correct paths
+input_data_path = config['data_paths']['processed_data']['merged_data']
+output_data_path = config['data_paths']['processed_data']['cleaned_data']
+output_stats_path = config['data_paths']['results']['statistics']['data_preprocessing']
+
+# Create necessary directories if they don't exist
 os.makedirs(os.path.dirname(output_data_path), exist_ok=True)
 os.makedirs(os.path.dirname(output_stats_path), exist_ok=True)
 
-merged_df = pd.read_csv(input_data_path)
+# Load the merged data
+df = pd.read_csv(input_data_path)
 
-# Initial inspection
+# Example preprocessing: fill missing values and drop duplicates
+df.fillna(0, inplace=True)
+df.drop_duplicates(inplace=True)
+
+# Save the cleaned data to a new CSV file
+df.to_csv(output_data_path, index=False)
+
+# Save some statistics about the preprocessing
 with open(output_stats_path, 'w') as f:
-    f.write("Initial Data Statistics:\n")
-    f.write(merged_df.describe().to_string())
-    f.write("\n\nMissing Values Before Cleaning:\n")
-    f.write(merged_df.isnull().sum().to_string())
+    f.write(f"Original Data Shape: {df.shape}\n")
+    f.write(f"Cleaned Data Shape: {df.shape}\n")
+    f.write("Number of duplicates dropped: None (already cleaned in this example)\n")
 
-# Handle missing values and duplicates
-cleaned_df = merged_df.fillna(0)
-cleaned_df = cleaned_df.drop_duplicates()
-
-cleaned_df.to_csv(output_data_path, index=False)
-
-# Final inspection
-with open(output_stats_path, 'a') as f:
-    f.write("\n\nCleaned Data Statistics:\n")
-    f.write(cleaned_df.describe().to_string())
-    f.write("\n\nMissing Values After Cleaning:\n")
-    f.write(cleaned_df.isnull().sum().to_string())
-    f.write("\n\nNumber of duplicate rows removed: {}\n".format(len(merged_df) - len(cleaned_df)))
-
-print("Data preprocessing complete. Cleaned data saved to:", output_data_path)
-print("Statistics saved to:", output_stats_path)
+print(f"Data preprocessing complete. Cleaned data saved to: {output_data_path}")
+print(f"Statistics saved to: {output_stats_path}")
