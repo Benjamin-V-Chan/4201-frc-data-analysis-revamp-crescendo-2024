@@ -1,8 +1,8 @@
-# frc-crescendo-2024-data-analysis-revamp
+# frc-data-analysis-revamp-crescendo-2024
 
 ## About
 
-Complete revamp of the data analysis system for "FRC Team 4201: The Vitruvian Bots" for the 2024 season.
+Complete revamp of the data analysis system for "FRC Team 4201: The Vitruvian Bots" for the 2024 game, Crescendo.
 
 ## Installation
 
