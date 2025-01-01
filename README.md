@@ -1,8 +1,8 @@
-# FRC Data Analysis System
+# frc-crescendo-2024-data-analysis-revamp
 
-## Introduction
+## About
 
-This project is a complete revamp of the data analysis system for "FRC Team 4201: The Vitruvian Bots" for the 2024 season. 
+Complete revamp of the data analysis system for "FRC Team 4201: The Vitruvian Bots" for the 2024 season.
 
 ## Installation
 
