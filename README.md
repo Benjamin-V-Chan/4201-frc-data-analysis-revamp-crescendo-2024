@@ -1,4 +1,4 @@
-# 4201-frc-data-analysis-revamp-crescendo-2024
+# 4201-frc-data-science-revamp-crescendo-2024
 
 ## About
 
