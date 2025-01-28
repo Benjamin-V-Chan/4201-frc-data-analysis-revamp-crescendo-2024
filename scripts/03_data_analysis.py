@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import os
 import json
 from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN, MeanShift
